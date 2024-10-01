@@ -1,0 +1,144 @@
+SQL Ted data Analysis project :
+
+1. Basic Queries:
+
+Q) How many TED talks are there in the dataset?
+
+A) select count(talk_id) from ted_data;
+
+
+2. Filtering with WHERE:
+
+Q) Retrieve the titles of TED talks with more than 1 million views.
+
+A) SELECT title from ted_data where views > 1000000;
+
+
+3. Sorting and LIMIT:
+
+Q) List the top 5 most viewed TED talks.
+
+A) SELECT title from ted_data order by views desc limit 5;
+
+
+4. Group By and Aggregate Functions:
+
+Q) Group TED talks by event and count how many talks each event had.
+
+A) select count(talk_id) as no_of_events, events 
+   from  ted_data group by events; 
+
+
+5. HAVING Clause:
+
+Q) Find events that had more than 10 TED talks.
+
+A) SELECT events FROM ted_show.ted_data 
+   group by events 
+   having sum(talk_id)> 10 ;
+
+
+6. Aggregate Functions:
+
+Q) What is the total number of views across all TED talks?
+
+A) SELECT sum(views) FROM ted_show.ted_data;
+
+Q) What is the average duration of a TED talk?
+
+A) SELECT avg(duration) FROM ted_show.ted_data;
+
+
+7. Self-Join Question:
+
+Q) How can you use a self-join to find TED talks given by the same speaker at different events?
+
+A) SELECT td.title,td.talk_id, td.speaker_1, td.events FROM ted_data as td
+   join ted_data as ts ON td.speaker_1 = ts.speaker_1 
+   AND td.talk_id != ts.talk_id 
+   AND td.events != ts.events ;
+
+
+8. WITH (Common Table Expressions):
+
+Q) Using a CTE, find the top 5 TED talks with the most comments.
+
+A) with ted_cte as (
+   select title, comments from ted_data order by comments desc 
+   limit 5)
+   select title, comments from ted_cte;
+
+
+9. CASE Statement:
+
+Q) Create a column that categorizes TED talks into ‘short’ (less than 10 minutes), ‘medium’ (10-20 minutes), 
+   and ‘long’ (more than 20 minutes) based on duration.
+
+A) SELECT title, duration/60 as time_length,
+    case
+       when duration/60 <=10 then 'short'
+       when duration/60 >=10 and duration/60 <= 20 then 'medium'
+       when duration/60 >= 20 then 'large'
+    end as Show_time
+   from ted_data;
+
+
+10. Window Functions:
+
+Q) Rank the TED talks by views and assign a rank to each talk.
+
+A) SELECT rank() over(order by views desc) as ted_rank, title, views from ted_data ;
+
+
+11. Date Functions:
+
+Q) Find TED talks that were published between 2010-2011.
+
+A) SELECT 
+     title, 
+     views, 
+     YEAR(STR_TO_DATE(recorded_date, '%d-%m-%Y')) AS years FROM ted_data
+   WHERE YEAR(STR_TO_DATE(recorded_date, '%d-%m-%Y')) BETWEEN 2010 AND 2011
+   ORDER BY title;
+
+
+12. Subquery:
+
+Q) Retrieve TED talks where the number of views is higher than the average views.
+
+A) SELECT talk_id, title,views from ted_data
+   where views > (select avg(views) from ted_data);
+
+
+13. String Functions:
+
+Q) List TED talks where the title contains the word “future”.
+
+A) SELECT talk_id,title FROM ted_show.ted_data
+   where title like '%future%';
+
+
+14. UNION:
+
+Q) Combine two queries, one that retrieves talks with over 1 million views, and another that retrieves talks with over 500 comments
+
+A) (select talk_id, title, views, comments from ted_data
+   where views > 1000000)
+   union
+   (select talk_id,title,views, comments from ted_data
+   where comments > 500);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
